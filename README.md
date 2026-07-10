@@ -83,7 +83,7 @@ Weather Dashboard
 
 │ ├── app.py
 
-│ ├── style.css
+│ 
 
 │ └── requirements.txt
 

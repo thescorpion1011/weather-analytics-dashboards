@@ -41,7 +41,17 @@ This application provides real-time weather information, weather forecasting, an
 - 💾 Search History
 - 🌙 Dark/Light Theme
 
----
+## 📸 Screenshots
+
+- Streamlit Dashboard
+- FastAPI Swagger API
+- Weather Charts
+
+## 📄 Project Documentation
+
+The complete project report is available in:
+
+`docs/Weather_Dashboard_Report.pdf`
 
 # 🛠 Tech Stack
 

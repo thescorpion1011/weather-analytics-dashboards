@@ -1,4 +1,6 @@
-from dotenv import load_dotenv
+import streamlit as st
+
+API_KEY = st.secrets["OPENWEATHER_API_KEY"]
 import os
 
 load_dotenv()

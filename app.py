@@ -1,12 +1,11 @@
 import streamlit as st
 import plotly.graph_objects as go
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from streamlit_autorefresh import st_autorefresh
 import pandas as pd
 import plotly.express as px
 
 from weather import get_current_weather
-from zoneinfo import ZoneInfo
 
 
 # -----------------------------
@@ -36,18 +35,17 @@ st.sidebar.title("🌦️ Weather Dashboard")
 st.sidebar.markdown("---")
 
 
-
-
+# India Time / IST
 india_time = datetime.now(
-    ZoneInfo("Asia/Kolkata")
+    timezone(timedelta(hours=5, minutes=30))
 )
 
 current_time = india_time.strftime(
     "%d-%m-%Y\n\n%I:%M:%S %p"
 )
 
-
 st.sidebar.info(current_time)
+
 
 city = st.sidebar.text_input(
     "Enter City",
@@ -69,7 +67,7 @@ try:
 
     raw_data = get_current_weather(city)
 
-    # Check if OpenWeather returned an error
+    # Check OpenWeather API response
     if raw_data.get("cod") != 200:
 
         st.error(
@@ -102,6 +100,9 @@ try:
     sunrise_timestamp = raw_data["sys"]["sunrise"]
 
     sunset_timestamp = raw_data["sys"]["sunset"]
+
+    # OpenWeather timezone offset for selected city
+    city_timezone_offset = raw_data["timezone"]
 
 
     # -----------------------------
@@ -306,11 +307,8 @@ try:
     ]
 
 
-    # NOTE:
-    # These are currently sample values.
-    # We can replace them with real forecast
-    # data from OpenWeather later.
-
+    # Sample values
+    # Can be replaced with forecast API data later
     temp = [
         24,
         26,
@@ -358,32 +356,36 @@ try:
     col1, col2 = st.columns(2)
 
 
+    # Convert OpenWeather timezone offset
+    # into a timezone for the selected city
+    city_tz = timezone(
+        timedelta(seconds=city_timezone_offset)
+    )
+
+
+    # Sunrise
+    sunrise = datetime.fromtimestamp(
+        sunrise_timestamp,
+        tz=city_tz
+    ).strftime("%I:%M %p")
+
+
+    # Sunset
+    sunset = datetime.fromtimestamp(
+        sunset_timestamp,
+        tz=city_tz
+    ).strftime("%I:%M %p")
+
+
     with col1:
 
-       india_tz = ZoneInfo("Asia/Kolkata")
-
-       sunrise = datetime.fromtimestamp(
-                    sunrise_timestamp,
-                     tz=india_tz
-                     ).strftime("%I:%M %p")
-
-       sunset = datetime.fromtimestamp(
-                    sunset_timestamp,
-                     tz=india_tz
-                     ).strftime("%I:%M %p")
-
-       st.metric(
+        st.metric(
             "🌅 Sunrise",
             sunrise
         )
 
 
     with col2:
-
-        sunset = datetime.fromtimestamp(
-            sunset_timestamp
-        ).strftime("%I:%M %p")
-
 
         st.metric(
             "🌇 Sunset",
@@ -396,9 +398,3 @@ except Exception as e:
     st.error(
         f"Unable to fetch weather data: {e}"
     )
-
-
-
-
-
-

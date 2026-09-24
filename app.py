@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.express as px
 
 from weather import get_current_weather
+from zoneinfo import ZoneInfo
 
 
 # -----------------------------
@@ -35,9 +36,16 @@ st.sidebar.title("🌦️ Weather Dashboard")
 st.sidebar.markdown("---")
 
 
-current_time = datetime.now().strftime(
+
+
+india_time = datetime.now(
+    ZoneInfo("Asia/Kolkata")
+)
+
+current_time = india_time.strftime(
     "%d-%m-%Y\n\n%I:%M:%S %p"
 )
+
 
 st.sidebar.info(current_time)
 
@@ -352,10 +360,17 @@ try:
 
     with col1:
 
-        sunrise = datetime.fromtimestamp(
-            sunrise_timestamp
-        ).strftime("%I:%M %p")
+       india_tz = ZoneInfo("Asia/Kolkata")
 
+       sunrise = datetime.fromtimestamp(
+                    sunrise_timestamp,
+                     tz=india_tz
+                     ).strftime("%I:%M %p")
+
+       sunset = datetime.fromtimestamp(
+                    sunset_timestamp,
+                     tz=india_tz
+                     ).strftime("%I:%M %p")
 
         st.metric(
             "🌅 Sunrise",

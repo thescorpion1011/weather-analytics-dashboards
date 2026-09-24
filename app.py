@@ -372,7 +372,7 @@ try:
                      tz=india_tz
                      ).strftime("%I:%M %p")
 
-        st.metric(
+       st.metric(
             "🌅 Sunrise",
             sunrise
         )
